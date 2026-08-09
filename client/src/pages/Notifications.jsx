@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "../styles/notification.css";
 import Empty from "../components/Empty";
@@ -14,18 +14,21 @@ const Notifications = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
 
-  const getAllNotif = async (e) => {
+  const getAllNotif = useCallback(async () => {
     try {
       dispatch(setLoading(true));
       const temp = await fetchData(`/api/notification/getallnotifs`);
-      dispatch(setLoading(false));
       setNotifications(temp);
-    } catch (error) {}
-  };
+    } catch (error) {
+      return error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     getAllNotif();
-  }, []);
+  }, [getAllNotif]);
 
   return (
     <>

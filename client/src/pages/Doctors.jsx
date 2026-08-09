@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import DoctorCard from "../components/DoctorCard";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -14,16 +14,21 @@ const Doctors = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
 
-  const fetchAllDocs = async () => {
+  const fetchAllDocs = useCallback(async () => {
     dispatch(setLoading(true));
-    const data = await fetchData(`/api/doctor/getalldoctors`);
-    setDoctors(data);
-    dispatch(setLoading(false));
-  };
+    try {
+      const data = await fetchData(`/api/doctor/getalldoctors`);
+      setDoctors(data);
+    } catch (error) {
+      return error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     fetchAllDocs();
-  }, []);
+  }, [fetchAllDocs]);
 
   return (
     <>

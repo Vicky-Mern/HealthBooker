@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Empty from "../components/Empty";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -17,20 +17,23 @@ const Appointments = () => {
   const { loading } = useSelector((state) => state.root);
   const { userId } = jwt_decode(localStorage.getItem("token"));
 
-  const getAllAppoint = async (e) => {
+  const getAllAppoint = useCallback(async () => {
     try {
       dispatch(setLoading(true));
       const temp = await fetchData(
         `/api/appointment/getallappointments?search=${userId}`
       );
       setAppointments(temp);
+    } catch (error) {
+      return error;
+    } finally {
       dispatch(setLoading(false));
-    } catch (error) {}
-  };
+    }
+  }, [dispatch, userId]);
 
   useEffect(() => {
     getAllAppoint();
-  }, []);
+  }, [getAllAppoint]);
 
   const complete = async (ele) => {
     try {

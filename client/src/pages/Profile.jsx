@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "../styles/profile.css";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -27,7 +27,7 @@ function Profile() {
     confpassword: "",
   });
 
-  const getUser = async () => {
+  const getUser = useCallback(async () => {
     try {
       dispatch(setLoading(true));
       const temp = await fetchData(`/api/user/getuser/${userId}`);
@@ -39,13 +39,16 @@ function Profile() {
         age: temp.age === null ? "" : temp.age,
       });
       setFile(temp.pic);
+    } catch (error) {
+      return error;
+    } finally {
       dispatch(setLoading(false));
-    } catch (error) {}
-  };
+    }
+  }, [dispatch, userId]);
 
   useEffect(() => {
     getUser();
-  }, [dispatch]);
+  }, [getUser]);
 
   const inputChange = (e) => {
     const { name, value } = e.target;
