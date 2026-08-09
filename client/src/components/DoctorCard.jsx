@@ -5,9 +5,9 @@ import { toast } from "react-hot-toast";
 
 const DoctorCard = ({ ele }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   const handleModal = () => {
+    const token = localStorage.getItem("token") || "";
     if (token === "") {
       return toast.error("You must log in first");
     }

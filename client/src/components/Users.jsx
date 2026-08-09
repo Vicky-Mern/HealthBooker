@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Loading from "./Loading";
@@ -14,14 +14,17 @@ const Users = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
 
-  const getAllUsers = async (e) => {
+  const getAllUsers = useCallback(async () => {
     try {
       dispatch(setLoading(true));
       const temp = await fetchData(`/api/user/getallusers`);
       setUsers(temp);
+    } catch (error) {
+      return error;
+    } finally {
       dispatch(setLoading(false));
-    } catch (error) {}
-  };
+    }
+  }, [dispatch]);
 
   const deleteUser = async (userId) => {
     try {
@@ -50,7 +53,7 @@ const Users = () => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [getAllUsers]);
 
   return (
     <>
